@@ -1,0 +1,160 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: ai-quiz-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ai_dev_quiz
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  service-registry:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: service-registry
+    container_name: service-registry
+    restart: unless-stopped
+    ports:
+      - "8761:8761"
+
+  auth-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: auth-service
+    container_name: auth-service
+    restart: unless-stopped
+    depends_on:
+      - service-registry
+    environment:
+      JWT_SECRET: change-this-jwt-secret
+      FRONTEND_URL: http://localhost:5173
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    ports:
+      - "8081:8081"
+
+  ai-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: ai-service
+    container_name: ai-service
+    restart: unless-stopped
+    depends_on:
+      - service-registry
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_BASE_URL: ${GROQ_BASE_URL:-https://api.groq.com/openai}
+      GROQ_MODEL: ${GROQ_MODEL:-llama-3.1-8b-instant}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    ports:
+      - "8083:8083"
+
+  quiz-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: quiz-service
+    container_name: quiz-service
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-registry:
+        condition: service_started
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/ai_dev_quiz
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    ports:
+      - "8082:8082"
+
+  result-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: result-service
+    container_name: result-service
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-registry:
+        condition: service_started
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/ai_dev_quiz
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    ports:
+      - "8084:8084"
+
+  recommendation-service:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: recommendation-service
+    container_name: recommendation-service
+    restart: unless-stopped
+    depends_on:
+      - service-registry
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    ports:
+      - "8085:8085"
+
+  api-gateway:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: api-gateway
+    container_name: api-gateway
+    restart: unless-stopped
+    depends_on:
+      - service-registry
+      - auth-service
+      - quiz-service
+      - ai-service
+      - result-service
+      - recommendation-service
+    environment:
+      JWT_SECRET: change-this-jwt-secret
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: /
+    container_name: ai-quiz-frontend
+    restart: unless-stopped
+    depends_on:
+      - api-gateway
+    ports:
+      - "5173:80"
+
+volumes:
+  mysql_data:

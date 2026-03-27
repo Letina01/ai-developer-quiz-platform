@@ -1,0 +1,106 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< com.aidevquiz:service-registry >-------------------
+[INFO] Building service-registry 1.0.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.3.0:run (default-cli) > test-compile @ service-registry >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ service-registry ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ service-registry ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ service-registry ---
+[INFO] skip non existing resourceDirectory C:\Users\ANJALI SHAW\OneDrive\Documents\Desktop\ai-developer-quiz-platform\backend\service-registry\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ service-registry ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.3.0:run (default-cli) < test-compile @ service-registry <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.3.0:run (default-cli) @ service-registry ---
+[INFO] Attaching agents: []
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-03-13T11:20:56.063+05:30  INFO 26308 --- [service-registry] [           main] c.a.registry.ServiceRegistryApplication  : Starting ServiceRegistryApplication using Java 17.0.8.1 with PID 26308 (C:\Users\ANJALI SHAW\OneDrive\Documents\Desktop\ai-developer-quiz-platform\backend\service-registry\target\classes started by ANJALI SHAW in C:\Users\ANJALI SHAW\OneDrive\Documents\Desktop\ai-developer-quiz-platform\backend\service-registry)
+2026-03-13T11:20:56.069+05:30  INFO 26308 --- [service-registry] [           main] c.a.registry.ServiceRegistryApplication  : No active profile set, falling back to 1 default profile: "default"
+2026-03-13T11:20:57.636+05:30  INFO 26308 --- [service-registry] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=5edf77d0-f109-334e-864c-34b2adad1fd9
+2026-03-13T11:20:57.713+05:30  WARN 26308 --- [service-registry] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-03-13T11:20:57.718+05:30  WARN 26308 --- [service-registry] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected into a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies.
+2026-03-13T11:20:58.155+05:30  INFO 26308 --- [service-registry] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8761 (http)
+2026-03-13T11:20:58.173+05:30  INFO 26308 --- [service-registry] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-13T11:20:58.174+05:30  INFO 26308 --- [service-registry] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.24]
+2026-03-13T11:20:58.293+05:30  INFO 26308 --- [service-registry] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-03-13T11:20:58.294+05:30  INFO 26308 --- [service-registry] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2147 ms
+2026-03-13T11:20:59.468+05:30  INFO 26308 --- [service-registry] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2026-03-13T11:20:59.468+05:30  INFO 26308 --- [service-registry] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2026-03-13T11:20:59.702+05:30  INFO 26308 --- [service-registry] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2026-03-13T11:20:59.702+05:30  INFO 26308 --- [service-registry] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2026-03-13T11:21:01.104+05:30  WARN 26308 --- [service-registry] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-03-13T11:21:01.134+05:30  INFO 26308 --- [service-registry] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-03-13T11:21:01.176+05:30  INFO 26308 --- [service-registry] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-03-13T11:21:01.177+05:30  INFO 26308 --- [service-registry] [           main] com.netflix.discovery.DiscoveryClient    : Client configured to neither register nor query for data.
+2026-03-13T11:21:01.194+05:30  INFO 26308 --- [service-registry] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1773381061192 with initial instances count: 0
+2026-03-13T11:21:01.248+05:30  INFO 26308 --- [service-registry] [           main] c.n.eureka.DefaultEurekaServerContext    : Initializing ...
+2026-03-13T11:21:01.251+05:30  INFO 26308 --- [service-registry] [           main] c.n.eureka.cluster.PeerEurekaNodes       : Adding new peer nodes [http://localhost:8761/eureka/]
+2026-03-13T11:21:01.487+05:30  INFO 26308 --- [service-registry] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2026-03-13T11:21:01.487+05:30  INFO 26308 --- [service-registry] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2026-03-13T11:21:01.487+05:30  INFO 26308 --- [service-registry] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2026-03-13T11:21:01.487+05:30  INFO 26308 --- [service-registry] [           main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2026-03-13T11:21:01.619+05:30  INFO 26308 --- [service-registry] [           main] c.n.eureka.cluster.PeerEurekaNodes       : Replica node URL:  http://localhost:8761/eureka/
+2026-03-13T11:21:01.628+05:30  INFO 26308 --- [service-registry] [           main] c.n.e.registry.AbstractInstanceRegistry  : Finished initializing remote region registries. All known remote regions: []
+2026-03-13T11:21:01.630+05:30  INFO 26308 --- [service-registry] [           main] c.n.eureka.DefaultEurekaServerContext    : Initialized
+2026-03-13T11:21:01.642+05:30  INFO 26308 --- [service-registry] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint beneath base path '/actuator'
+2026-03-13T11:21:01.695+05:30  INFO 26308 --- [service-registry] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application SERVICE-REGISTRY with eureka with status UP
+2026-03-13T11:21:01.713+05:30  INFO 26308 --- [service-registry] [       Thread-9] o.s.c.n.e.server.EurekaServerBootstrap   : isAws returned false
+2026-03-13T11:21:01.714+05:30  INFO 26308 --- [service-registry] [       Thread-9] o.s.c.n.e.server.EurekaServerBootstrap   : Initialized server context
+2026-03-13T11:21:01.714+05:30  INFO 26308 --- [service-registry] [       Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl    : Got 1 instances from neighboring DS node
+2026-03-13T11:21:01.714+05:30  INFO 26308 --- [service-registry] [       Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl    : Renew threshold is: 1
+2026-03-13T11:21:01.715+05:30  INFO 26308 --- [service-registry] [       Thread-9] c.n.e.r.PeerAwareInstanceRegistryImpl    : Changing status to UP
+2026-03-13T11:21:01.729+05:30  INFO 26308 --- [service-registry] [       Thread-9] e.s.EurekaServerInitializerConfiguration : Started Eureka Server
+2026-03-13T11:21:01.761+05:30  INFO 26308 --- [service-registry] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8761 (http) with context path '/'
+2026-03-13T11:21:01.762+05:30  INFO 26308 --- [service-registry] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8761
+2026-03-13T11:21:01.879+05:30  INFO 26308 --- [service-registry] [           main] c.a.registry.ServiceRegistryApplication  : Started ServiceRegistryApplication in 6.546 seconds (process running for 7.128)
+2026-03-13T11:21:02.138+05:30  INFO 26308 --- [service-registry] [nio-8761-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-13T11:21:02.139+05:30  INFO 26308 --- [service-registry] [nio-8761-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-03-13T11:21:02.140+05:30  INFO 26308 --- [service-registry] [nio-8761-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-03-13T11:22:01.738+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-03-13T11:22:35.704+05:30  INFO 26308 --- [service-registry] [nio-8761-exec-6] c.n.e.registry.AbstractInstanceRegistry  : Registered instance RECOMMENDATION-SERVICE/ENGINEERLENOVO25:recommendation-service:8085 with status UP (replication=false)
+2026-03-13T11:22:35.704+05:30  INFO 26308 --- [service-registry] [nio-8761-exec-7] c.n.e.registry.AbstractInstanceRegistry  : Registered instance API-GATEWAY/ENGINEERLENOVO25:api-gateway:8080 with status UP (replication=false)
+2026-03-13T11:22:35.729+05:30  INFO 26308 --- [service-registry] [nio-8761-exec-8] c.n.e.registry.AbstractInstanceRegistry  : Registered instance AI-SERVICE/ENGINEERLENOVO25:ai-service:8083 with status UP (replication=false)
+2026-03-13T11:22:37.901+05:30  INFO 26308 --- [service-registry] [nio-8761-exec-9] c.n.e.registry.AbstractInstanceRegistry  : Registered instance AI-SERVICE/ENGINEERLENOVO25:ai-service:8083 with status UP (replication=true)
+2026-03-13T11:22:37.903+05:30  INFO 26308 --- [service-registry] [nio-8761-exec-9] c.n.e.registry.AbstractInstanceRegistry  : Registered instance RECOMMENDATION-SERVICE/ENGINEERLENOVO25:recommendation-service:8085 with status UP (replication=true)
+2026-03-13T11:22:37.904+05:30  INFO 26308 --- [service-registry] [nio-8761-exec-9] c.n.e.registry.AbstractInstanceRegistry  : Registered instance API-GATEWAY/ENGINEERLENOVO25:api-gateway:8080 with status UP (replication=true)
+2026-03-13T11:23:01.734+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-03-13T11:24:01.735+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-03-13T11:25:01.735+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-03-13T11:26:01.736+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-03-13T11:27:01.736+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-03-13T11:28:01.736+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-03-13T11:29:01.736+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-03-13T11:30:01.737+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+2026-03-13T11:31:01.739+05:30  INFO 26308 --- [service-registry] [a-EvictionTimer] c.n.e.registry.AbstractInstanceRegistry  : Running the evict task with compensationTime 0ms
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11:04 min
+[INFO] Finished at: 2026-03-13T11:31:49+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.3.0:run (default-cli) on project service-registry: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

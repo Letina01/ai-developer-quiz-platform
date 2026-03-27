@@ -1,0 +1,105 @@
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ai_dev_quiz
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  service-registry:
+    image: ghcr.io/${GHCR_OWNER}/ai-quiz-service-registry:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+
+  auth-service:
+    image: ghcr.io/${GHCR_OWNER}/ai-quiz-auth-service:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - service-registry
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+
+  ai-service:
+    image: ghcr.io/${GHCR_OWNER}/ai-quiz-ai-service:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - service-registry
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      GROQ_API_KEY: ${GROQ_API_KEY}
+      GROQ_BASE_URL: ${GROQ_BASE_URL:-https://api.groq.com/openai}
+      GROQ_MODEL: ${GROQ_MODEL:-llama-3.1-8b-instant}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+  quiz-service:
+    image: ghcr.io/${GHCR_OWNER}/ai-quiz-quiz-service:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-registry:
+        condition: service_started
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/ai_dev_quiz
+      DB_USERNAME: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+
+  result-service:
+    image: ghcr.io/${GHCR_OWNER}/ai-quiz-result-service:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      service-registry:
+        condition: service_started
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/ai_dev_quiz
+      DB_USERNAME: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+
+  recommendation-service:
+    image: ghcr.io/${GHCR_OWNER}/ai-quiz-recommendation-service:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - service-registry
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+
+  api-gateway:
+    image: ghcr.io/${GHCR_OWNER}/ai-quiz-api-gateway:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - service-registry
+      - auth-service
+      - quiz-service
+      - ai-service
+      - result-service
+      - recommendation-service
+    environment:
+      JWT_SECRET: ${JWT_SECRET}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+    ports:
+      - "8080:8080"
+
+  frontend:
+    image: ghcr.io/${GHCR_OWNER}/ai-quiz-frontend:${IMAGE_TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - api-gateway
+    ports:
+      - "80:80"
+
+volumes:
+  mysql_data:

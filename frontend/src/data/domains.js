@@ -1,0 +1,21 @@
+export const domains = [
+  { title: "Java", description: "Concurrency, collections, JVM, and clean code." },
+  { title: "Spring Boot", description: "Dependency injection, REST, data access, and testing." },
+  { title: "Microservices", description: "Discovery, gateways, resilience, and service contracts." },
+  { title: "AWS", description: "Compute, networking, IAM, storage, and architecture tradeoffs." },
+  { title: "AI/ML", description: "Model fundamentals, training pipelines, and deployment patterns." },
+  { title: "Generative AI", description: "Prompting, RAG, embeddings, and LLM application design." },
+  { title: "Cybersecurity", description: "Threat modeling, OWASP, secure coding, and IAM controls." },
+  { title: "Testing/QA", description: "Unit, integration, E2E, automation strategy, and test design." },
+  { title: "Data Engineering", description: "ETL, data modeling, warehouses, and batch/stream pipelines." },
+  { title: "Data Science", description: "Statistics, experimentation, feature engineering, and evaluation." },
+  { title: "React", description: "Component architecture, state management, and performance tuning." },
+  { title: "Node.js", description: "API design, async flows, observability, and service performance." },
+  { title: "Python", description: "Core language depth, backend scripting, and production patterns." },
+  { title: "SQL", description: "Joins, indexing, query optimization, and schema design." },
+  { title: "Kubernetes", description: "Workloads, autoscaling, networking, and production operations." },
+  { title: "Site Reliability", description: "SLO/SLA, incident response, resilience, and monitoring." },
+  { title: "DevOps", description: "CI/CD, Docker, Kubernetes, observability, and automation." },
+  { title: "Data Structures", description: "Arrays, trees, graphs, heaps, and complexity." },
+  { title: "System Design", description: "Scalability, availability, caching, queues, and APIs." }
+];
