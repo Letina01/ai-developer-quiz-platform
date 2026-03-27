@@ -107,8 +107,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: letina01
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
@@ -145,6 +145,6 @@ jobs:
             curl -fsSL https://raw.githubusercontent.com/letina01/ai-developer-quiz-platform/main/.env.prod.example -o .env.prod.example
             cp -n .env.prod.example .env
             sed -i "s/^GHCR_OWNER=.*/GHCR_OWNER=letina01/" .env
-            docker login ghcr.io -u letina01 -p ${{ secrets.GITHUB_TOKEN }}
+            docker login ghcr.io -u letina01 -p ${{ secrets.GHCR_TOKEN }}
             docker-compose -f docker-compose.prod.yml --env-file .env pull
             docker-compose -f docker-compose.prod.yml --env-file .env up -d
