@@ -134,8 +134,15 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
+          command_timeout: 20m
           script: |
-            cd /opt/ai-developer-quiz-platform || mkdir -p /opt/ai-developer-quiz-platform && cd /opt/ai-developer-quiz-platform
+            DEPLOY_PATH="${{ secrets.DEPLOY_PATH }}"
+            if [ -z "$DEPLOY_PATH" ]; then
+              DEPLOY_PATH="/opt/ai-developer-quiz-platform"
+            fi
+
+            mkdir -p "$DEPLOY_PATH"
+            cd "$DEPLOY_PATH"
             
             if [ ! -d ".git" ]; then
               git clone https://github.com/Letina01/ai-developer-quiz-platform .
@@ -143,5 +150,5 @@ jobs:
               git pull origin main
             fi
 
-            docker compose down
-            docker compose up -d --build
+            docker compose -f docker-compose.prod.yml --env-file .env pull
+            docker compose -f docker-compose.prod.yml --env-file .env up -d --remove-orphans
