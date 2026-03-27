@@ -151,5 +151,5 @@ jobs:
             cp -n .env.prod.example .env
             sed -i "s/^GHCR_OWNER=.*/GHCR_OWNER=letina01/" .env
             docker login ghcr.io -u letina01 -p ${{ secrets.GITHUB_TOKEN }}
-            docker compose -f docker-compose.prod.yml --env-file .env pull
-            docker compose -f docker-compose.prod.yml --env-file .env up -d
+            docker-compose -f docker-compose.prod.yml --env-file .env pull
+            docker-compose -f docker-compose.prod.yml --env-file .env up -d
