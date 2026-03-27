@@ -127,19 +127,6 @@ jobs:
     if: github.ref == 'refs/heads/main'
     timeout-minutes: 20
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Copy compose and env template
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          source: "docker-compose.prod.yml,.env.prod.example"
-          target: ${{ secrets.DEPLOY_PATH }}
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -147,12 +134,14 @@ jobs:
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
-          timeout: 600s
-          command_timeout: 30m
           script: |
-            cd ${{ secrets.DEPLOY_PATH }}
-            cp -n .env.prod.example .env
-            sed -i "s/^GHCR_OWNER=.*/GHCR_OWNER=letina01/" .env
-            docker login ghcr.io -u letina01 -p ${{ secrets.GITHUB_TOKEN }}
-            docker-compose -f docker-compose.prod.yml --env-file .env pull
-            docker-compose -f docker-compose.prod.yml --env-file .env up -d
+            cd /opt/ai-developer-quiz-platform || mkdir -p /opt/ai-developer-quiz-platform && cd /opt/ai-developer-quiz-platform
+            
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/Letina01/ai-developer-quiz-platform .
+            else
+              git pull origin main
+            fi
+
+            docker compose down
+            docker compose up -d --build
