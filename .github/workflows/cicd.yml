@@ -130,16 +130,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Copy compose and env template
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
-          port: ${{ secrets.DEPLOY_PORT }}
-          source: "docker-compose.prod.yml,.env.prod.example"
-          target: ${{ secrets.DEPLOY_PATH }}
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -151,6 +141,8 @@ jobs:
           command_timeout: 30m
           script: |
             cd ${{ secrets.DEPLOY_PATH }}
+            curl -fsSL https://raw.githubusercontent.com/letina01/ai-developer-quiz-platform/main/docker-compose.prod.yml -o docker-compose.prod.yml
+            curl -fsSL https://raw.githubusercontent.com/letina01/ai-developer-quiz-platform/main/.env.prod.example -o .env.prod.example
             cp -n .env.prod.example .env
             sed -i "s/^GHCR_OWNER=.*/GHCR_OWNER=letina01/" .env
             docker login ghcr.io -u letina01 -p ${{ secrets.GITHUB_TOKEN }}
