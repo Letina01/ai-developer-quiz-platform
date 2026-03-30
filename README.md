@@ -88,6 +88,13 @@ OPENAI_API_KEY=
 OLLAMA_BASE_URL=http://localhost:11434
 ```
 
+## Projects
+
+### AI Developer Quiz Platform
+- Dynamic AI-powered quiz generation using Spring AI and OpenAI/Ollama integration
+- Microservices architecture with service discovery, API gateway, and JWT security
+- Comprehensive learning analytics with quiz results tracking and personalized recommendations
+
 ## Docker Local Run
 
 From project root:

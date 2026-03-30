@@ -2,3 +2,4 @@ target/
 *.jar
 frontend/dist/
 node_modules/
+.env
