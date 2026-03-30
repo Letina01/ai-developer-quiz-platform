@@ -18,8 +18,8 @@ services:
 
   service-registry:
     build:
-      context: ./backend/service-registry
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: service-registry/Dockerfile
     container_name: service-registry
     restart: unless-stopped
     ports:
@@ -27,8 +27,8 @@ services:
 
   auth-service:
     build:
-      context: ./backend/auth-service
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: auth-service/Dockerfile
     container_name: auth-service
     restart: unless-stopped
     depends_on:
@@ -44,8 +44,8 @@ services:
 
   ai-service:
     build:
-      context: ./backend/ai-service
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: ai-service/Dockerfile
     container_name: ai-service
     restart: unless-stopped
     depends_on:
@@ -61,8 +61,8 @@ services:
 
   quiz-service:
     build:
-      context: ./backend/quiz-service
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: quiz-service/Dockerfile
     container_name: quiz-service
     restart: unless-stopped
     depends_on:
@@ -80,8 +80,8 @@ services:
 
   result-service:
     build:
-      context: ./backend/result-service
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: result-service/Dockerfile
     container_name: result-service
     restart: unless-stopped
     depends_on:
@@ -99,8 +99,8 @@ services:
 
   recommendation-service:
     build:
-      context: ./backend/recommendation-service
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: recommendation-service/Dockerfile
     container_name: recommendation-service
     restart: unless-stopped
     depends_on:
@@ -112,8 +112,8 @@ services:
 
   api-gateway:
     build:
-      context: ./backend/api-gateway
-      dockerfile: Dockerfile
+      context: ./backend
+      dockerfile: api-gateway/Dockerfile
     container_name: api-gateway
     restart: unless-stopped
     depends_on:
