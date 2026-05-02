@@ -29,6 +29,9 @@ Production-oriented microservices scaffold for an AI-powered developer quiz plat
 - Public routes:
   - `POST /api/auth/register`
   - `POST /api/auth/login`
+  - `POST /api/auth/forgot-password`
+  - `GET /oauth2/authorization/google`
+  - `GET /login/oauth2/code/google`
   - `GET /actuator/health`
 
 ### Storage
@@ -58,12 +61,16 @@ ai-developer-quiz-platform/
 - `POST /api/auth/register`
 - `POST /api/auth/login`
 - `GET /api/auth/me`
+- `PUT /api/auth/profile`
+- `POST /api/auth/forgot-password`
 - `POST /api/quizzes/generate`
 - `GET /api/quizzes`
 - `GET /api/quizzes/{quizId}`
 - `POST /api/ai/quizzes/generate`
 - `POST /api/results`
+- `GET /api/results/users/me`
 - `GET /api/results/users/{userId}`
+- `GET /api/recommendations/users/me`
 - `GET /api/recommendations/users/{userId}`
 
 ## Example Quiz Flow
@@ -84,8 +91,19 @@ DB_URL=jdbc:mysql://localhost:3306/ai_dev_quiz
 DB_USERNAME=root
 DB_PASSWORD=change-me
 JWT_SECRET=replace-with-strong-256-bit-secret
+INTERNAL_API_KEY=change-me-internal
+FRONTEND_URL=http://localhost:5173
 OPENAI_API_KEY=
 OLLAMA_BASE_URL=http://localhost:11434
+GROQ_API_KEY=
+GROQ_BASE_URL=https://api.groq.com/openai
+GROQ_MODEL=llama-3.1-8b-instant
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=
+MAIL_PASSWORD=
 ```
 
 ## Projects
@@ -143,11 +161,11 @@ On your server:
 
 1. Install Docker + Docker Compose plugin.
 2. Create deploy folder, e.g. `/opt/ai-developer-quiz-platform`.
-3. Place `docker-compose.prod.yml` and `.env` there.
+3. Place `docker-compose.yml` and `.env` there.
 4. Start stack:
 
 ```bash
-docker compose -f docker-compose.prod.yml --env-file .env up -d
+docker compose --env-file .env up -d
 ```
 
-Use `.env.prod.example` as template for production `.env`.
+Use your production `.env` values for secrets and service keys.
