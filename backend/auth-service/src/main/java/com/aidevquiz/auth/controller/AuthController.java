@@ -1,13 +1,17 @@
 package com.aidevquiz.auth.controller;
 
 import com.aidevquiz.auth.dto.AuthResponse;
+import com.aidevquiz.auth.dto.ForgotPasswordRequest;
 import com.aidevquiz.auth.dto.LoginRequest;
 import com.aidevquiz.auth.dto.ProfileResponse;
 import com.aidevquiz.auth.dto.RegisterRequest;
+import com.aidevquiz.auth.dto.ResetPasswordRequest;
 import com.aidevquiz.auth.dto.UpdateProfileRequest;
 import com.aidevquiz.auth.entity.User;
 import com.aidevquiz.auth.service.AuthService;
 import jakarta.validation.Valid;
+import java.util.Map;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -51,6 +56,15 @@ public class AuthController {
         User existingUser = authService.findByEmail(principal.getUsername());
         User updatedUser = authService.updateProfile(existingUser.getId(), request);
         return toProfileResponse(updatedUser);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        if (!request.password().equals(request.confirmPassword())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Passwords do not match"));
+        }
+        authService.resetPasswordByEmail(request.email().toLowerCase(), request.password());
+        return ResponseEntity.ok(Map.of("message", "Password reset successfully. You can now login with your new password."));
     }
 
     private ProfileResponse toProfileResponse(User user) {

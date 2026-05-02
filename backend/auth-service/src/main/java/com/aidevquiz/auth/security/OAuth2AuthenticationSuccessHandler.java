@@ -48,7 +48,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         AuthResponse authResponse = authService.buildAuthResponse(user);
 
         String redirectUrl = frontendUrl + "/auth/callback"
-                + "?token=" + encode(authResponse.accessToken())
+                + "#token=" + encode(authResponse.accessToken())
                 + "&userId=" + authResponse.userId()
                 + "&name=" + encode(authResponse.name())
                 + "&email=" + encode(authResponse.email())

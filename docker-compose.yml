@@ -1,5 +1,7 @@
 services:
   mysql:
+    env_file:
+      - .env
     image: mysql:8.4
     container_name: ai-quiz-mysql
     restart: unless-stopped
@@ -7,7 +9,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: ai_dev_quiz
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
@@ -32,13 +34,20 @@ services:
     container_name: auth-service
     restart: unless-stopped
     depends_on:
-      - service-registry
+      mysql:
+        condition: service_healthy
+      service-registry:
+        condition: service_started
+    env_file:
+      - .env
     environment:
-      JWT_SECRET: change-this-jwt-secret
+      DB_URL: jdbc:mysql://mysql:3306/ai_dev_quiz
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      JWT_SECRET: ${JWT_SECRET}
+      EMAIL_SERVICE_URL: http://email-service:8086
       FRONTEND_URL: http://localhost:5173
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
     ports:
       - "8081:8081"
 
@@ -74,6 +83,9 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/ai_dev_quiz
       DB_USERNAME: root
       DB_PASSWORD: root
+      JWT_SECRET: ${JWT_SECRET}
+      AI_SERVICE_URL: http://ai-service:8083
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-change-me-internal}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
     ports:
       - "8082:8082"
@@ -93,6 +105,9 @@ services:
       DB_URL: jdbc:mysql://mysql:3306/ai_dev_quiz
       DB_USERNAME: root
       DB_PASSWORD: root
+      JWT_SECRET: ${JWT_SECRET}
+      QUIZ_SERVICE_URL: http://quiz-service:8082
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-change-me-internal}
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
     ports:
       - "8084:8084"
@@ -106,9 +121,28 @@ services:
     depends_on:
       - service-registry
     environment:
+      JWT_SECRET: ${JWT_SECRET}
+      RESULT_SERVICE_URL: http://result-service:8084
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
     ports:
       - "8085:8085"
+
+  email-service:
+    build:
+      context: ./backend/email-service
+      dockerfile: Dockerfile
+    container_name: email-service
+    restart: unless-stopped
+    depends_on:
+      - service-registry
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
+      MAIL_HOST: ${MAIL_HOST:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+    ports:
+      - "8086:8086"
 
   api-gateway:
     build:
@@ -123,8 +157,15 @@ services:
       - ai-service
       - result-service
       - recommendation-service
+      - email-service
     environment:
-      JWT_SECRET: change-this-jwt-secret
+      JWT_SECRET: ${JWT_SECRET}
+      AUTH_SERVICE_URI: http://auth-service:8081
+      QUIZ_SERVICE_URI: http://quiz-service:8082
+      AI_SERVICE_URI: http://ai-service:8083
+      RESULT_SERVICE_URI: http://result-service:8084
+      RECOMMENDATION_SERVICE_URI: http://recommendation-service:8085
+      EMAIL_SERVICE_URI: http://email-service:8086
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
     ports:
       - "8080:8080"

@@ -5,6 +5,6 @@ import com.aidevquiz.result.dto.ResultResponse;
 import java.util.List;
 
 public interface ResultService {
-    ResultResponse create(CreateResultRequest request);
+    ResultResponse create(Long authenticatedUserId, CreateResultRequest request);
     List<ResultResponse> getByUser(Long userId);
 }

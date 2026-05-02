@@ -29,7 +29,7 @@ public class JwtService {
                 .subject(username)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plusMillis(expirationMs)))
-                .signWith(secretKey)
+                .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -40,6 +40,10 @@ public class JwtService {
     public boolean isTokenValid(String token, String expectedUsername) {
         Claims claims = parseClaims(token);
         return expectedUsername.equals(claims.getSubject()) && claims.getExpiration().after(new Date());
+    }
+
+    public Claims extractAllClaims(String token) {
+        return parseClaims(token);
     }
 
     private Claims parseClaims(String token) {

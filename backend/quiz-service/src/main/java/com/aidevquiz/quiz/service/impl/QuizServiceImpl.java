@@ -57,7 +57,7 @@ public class QuizServiceImpl implements QuizService {
             quiz.addQuestion(question);
         });
 
-        return map(quizRepository.save(quiz));
+        return map(quizRepository.save(quiz), false);
     }
 
     private void validateAiQuestion(AiQuestionResponse item) {
@@ -67,16 +67,62 @@ public class QuizServiceImpl implements QuizService {
     }
 
     @Override
-    public List<QuizResponse> getAll() {
-        return quizRepository.findAll().stream().map(this::map).toList();
+    public List<QuizResponse> getAll(Long userId) {
+        return quizRepository.findByCreatedByOrderByCreatedAtDesc(userId).stream()
+                .map(quiz -> map(quiz, false))
+                .toList();
     }
 
     @Override
-    public QuizResponse getById(Long quizId) {
-        return map(quizRepository.findById(quizId).orElseThrow(() -> new IllegalArgumentException("Quiz not found")));
+    public QuizResponse getById(Long quizId, Long userId) {
+        Quiz quiz = findOwnedQuiz(quizId, userId);
+        return map(quiz, false);
     }
 
-    private QuizResponse map(Quiz quiz) {
+    @Override
+    public QuizResponse getByIdWithAnswers(Long quizId, Long userId) {
+        Quiz quiz = findOwnedQuiz(quizId, userId);
+        return map(quiz, true);
+    }
+
+    @Override
+    public QuizResponse getByIdWithFullAnswers(Long quizId, Long userId) {
+        Quiz quiz = findOwnedQuiz(quizId, userId);
+        return mapWithFullAnswers(quiz);
+    }
+
+    private Quiz findOwnedQuiz(Long quizId, Long userId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new IllegalArgumentException("Quiz not found"));
+        if (!quiz.getCreatedBy().equals(userId)) {
+            throw new IllegalArgumentException("Unauthorized quiz access");
+        }
+        return quiz;
+    }
+
+    private QuizResponse map(Quiz quiz, boolean includeAnswers) {
+        return new QuizResponse(
+                quiz.getId(),
+                quiz.getCreatedBy(),
+                quiz.getDomain(),
+                quiz.getTopic(),
+                quiz.getDifficulty(),
+                quiz.getCreatedAt(),
+                quiz.getQuestions().stream()
+                        .map(question -> new QuestionResponse(
+                                question.getId(),
+                                question.getQuestion(),
+                                question.getOptionA(),
+                                question.getOptionB(),
+                                question.getOptionC(),
+                                question.getOptionD(),
+                                includeAnswers ? question.getCorrectAnswer() : null,
+                                includeAnswers ? question.getExplanation() : null
+                        ))
+                        .toList()
+        );
+    }
+
+    public QuizResponse mapWithFullAnswers(Quiz quiz) {
         return new QuizResponse(
                 quiz.getId(),
                 quiz.getCreatedBy(),

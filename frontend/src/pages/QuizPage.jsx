@@ -53,38 +53,18 @@ export default function QuizPage() {
 
     setIsSubmitting(true);
     try {
-      const score = activeQuiz.questions.reduce((total, item, index) => {
-        return total + (answers[index] === item.correctAnswer ? 1 : 0);
-      }, 0);
+      const selectedAnswers = activeQuiz.questions.map((_, index) => answers[index] || "");
 
-      await submitResult({
-        userId: user.id,
+      const response = await submitResult({
         quizId: activeQuiz.id,
-        domain: activeQuiz.domain,
-        topic: activeQuiz.topic,
-        difficulty: activeQuiz.difficulty,
-        score,
-        totalQuestions
+        selectedAnswers,
+        userEmail: user.email,
+        userName: user.name
       });
-
-      const review = activeQuiz.questions.map((item, index) => ({
-        question: item.question,
-        selected: answers[index] || "",
-        correctAnswer: item.correctAnswer,
-        explanation: item.explanation || "",
-        isCorrect: answers[index] === item.correctAnswer
-      }));
 
       sessionStorage.setItem(
         "lastQuizResult",
-        JSON.stringify({
-          score,
-          totalQuestions,
-          domain: activeQuiz.domain,
-          topic: activeQuiz.topic,
-          difficulty: activeQuiz.difficulty,
-          review
-        })
+        JSON.stringify(response.data)
       );
       sessionStorage.removeItem("activeQuiz");
       sessionStorage.removeItem("quizAnswers");

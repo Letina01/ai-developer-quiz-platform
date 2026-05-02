@@ -4,6 +4,7 @@ import com.aidevquiz.recommendation.dto.RecommendationResponse;
 import com.aidevquiz.recommendation.service.RecommendationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +18,10 @@ public class RecommendationController {
         this.recommendationService = recommendationService;
     }
 
-    @GetMapping("/users/{userId}")
-    public RecommendationResponse getRecommendations(@PathVariable("userId") Long userId) {
-        return recommendationService.getRecommendations(userId);
+    @GetMapping("/users/me")
+    public RecommendationResponse getMyRecommendations(
+            @RequestHeader(value = "X-User-Id", required = true) Long authenticatedUserId
+    ) {
+        return recommendationService.getRecommendations(authenticatedUserId);
     }
 }

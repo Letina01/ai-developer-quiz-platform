@@ -8,9 +8,14 @@ import com.aidevquiz.auth.entity.User;
 import com.aidevquiz.auth.repository.UserRepository;
 import com.aidevquiz.auth.security.JwtService;
 import com.aidevquiz.auth.service.AuthService;
+import com.aidevquiz.auth.client.EmailClient;
+import com.aidevquiz.auth.client.WelcomeEmailRequest;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,25 +25,32 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class AuthServiceImpl implements AuthService, UserDetailsService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final EmailClient emailClient;
 
     public AuthServiceImpl(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             @Lazy AuthenticationManager authenticationManager,
-            JwtService jwtService
+            JwtService jwtService,
+            EmailClient emailClient
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.emailClient = emailClient;
     }
 
     @Override
@@ -48,22 +60,26 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
         }
         User user = new User();
         user.setName(request.name());
-        user.setEmail(request.email());
+        user.setEmail(request.email().toLowerCase());
         user.setPassword(passwordEncoder.encode(request.password()));
         User saved = userRepository.save(user);
+        sendWelcomeEmail(saved);
         return buildAuthResponse(saved);
     }
 
     @Override
     public AuthResponse login(LoginRequest request) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
-        User user = findByEmail(request.email());
+        String normalizedEmail = request.email().toLowerCase();
+        log.info("Login attempt for: {}", normalizedEmail);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(normalizedEmail, request.password()));
+        User user = findByEmail(normalizedEmail);
+        log.info("Login successful for: {}", user.getEmail());
         return buildAuthResponse(user);
     }
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email.toLowerCase())
+        return userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
@@ -75,7 +91,8 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
 
     @Override
     public User findOrCreateGoogleUser(String email, String name) {
-        return userRepository.findByEmail(email.toLowerCase())
+        String normalizedEmail = email.toLowerCase();
+        return userRepository.findByEmailIgnoreCase(normalizedEmail)
                 .map(existingUser -> {
                     existingUser.setAuthProvider("GOOGLE");
                     if (existingUser.getName() == null || existingUser.getName().isBlank()) {
@@ -86,10 +103,12 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
                 .orElseGet(() -> {
                     User user = new User();
                     user.setName(name == null || name.isBlank() ? email : name);
-                    user.setEmail(email);
+                    user.setEmail(normalizedEmail);
                     user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
                     user.setAuthProvider("GOOGLE");
-                    return userRepository.save(user);
+                    User created = userRepository.save(user);
+                    sendWelcomeEmail(created);
+                    return created;
                 });
     }
 
@@ -107,8 +126,48 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
     }
 
     @Override
+    @Transactional
+    public void resetPasswordByEmail(String email, String password) {
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+        String encodedPassword = passwordEncoder.encode(password);
+        log.debug("Encoding password for: {}, raw length: {}", email, password.length());
+        user.setPassword(encodedPassword);
+        User saved = userRepository.save(user);
+        log.info("Password reset successful for user: {}", saved.getEmail());
+    }
+
+    @Override
+    public boolean validateResetToken(String token) {
+        if (token == null || token.isBlank()) {
+            return false;
+        }
+
+        return userRepository.findByResetToken(token)
+                .filter(user -> user.getResetTokenExpiresAt() != null)
+                .filter(user -> user.getResetTokenExpiresAt().isAfter(Instant.now()))
+                .isPresent();
+    }
+
+    @Override
+    public boolean resetPassword(String token, String password) {
+        User user = userRepository.findByResetToken(token)
+                .filter(item -> item.getResetTokenExpiresAt() != null && item.getResetTokenExpiresAt().isAfter(Instant.now()))
+                .orElseThrow(() -> new IllegalArgumentException("Invalid or expired reset token"));
+
+        user.setPassword(passwordEncoder.encode(password));
+        user.setResetToken(null);
+        user.setResetTokenExpiresAt(null);
+        userRepository.save(user);
+        return true;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) {
-        User user = findByEmail(username);
+        String normalizedUsername = username.toLowerCase();
+        log.debug("loadUserByUsername called with: {}", normalizedUsername);
+        User user = findByEmail(normalizedUsername);
+        log.debug("User found: {}, password length: {}", user.getEmail(), user.getPassword().length());
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
@@ -135,5 +194,12 @@ public class AuthServiceImpl implements AuthService, UserDetailsService {
                 user.getTargetRole(),
                 token
         );
+    }
+
+    private void sendWelcomeEmail(User user) {
+        emailClient.sendWelcomeEmail(new WelcomeEmailRequest(
+                user.getEmail(),
+                user.getName()
+        ));
     }
 }

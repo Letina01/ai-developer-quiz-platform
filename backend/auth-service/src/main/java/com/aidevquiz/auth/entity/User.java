@@ -41,6 +41,10 @@ public class User {
 
     private boolean profileCompleted = false;
 
+    private String resetToken;
+
+    private Instant resetTokenExpiresAt;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -126,5 +130,21 @@ public class User {
 
     public void setProfileCompleted(boolean profileCompleted) {
         this.profileCompleted = profileCompleted;
+    }
+
+    public String getResetToken() {
+        return resetToken;
+    }
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+
+    public Instant getResetTokenExpiresAt() {
+        return resetTokenExpiresAt;
+    }
+
+    public void setResetTokenExpiresAt(Instant resetTokenExpiresAt) {
+        this.resetTokenExpiresAt = resetTokenExpiresAt;
     }
 }

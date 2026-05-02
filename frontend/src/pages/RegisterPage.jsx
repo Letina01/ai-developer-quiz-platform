@@ -2,6 +2,20 @@ import { useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
+function extractErrorMessage(requestError, fallbackMessage) {
+  const data = requestError?.response?.data;
+  if (typeof data === "string" && data.trim()) {
+    return data;
+  }
+  if (data?.message) {
+    return data.message;
+  }
+  if (data?.error) {
+    return data.error;
+  }
+  return fallbackMessage;
+}
+
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { register, isAuthenticated, user } = useAuth();
@@ -22,7 +36,7 @@ export default function RegisterPage() {
       await register(form);
       navigate("/profile");
     } catch (requestError) {
-      setError(requestError.response?.data?.message || "Registration failed. Try a different email.");
+      setError(extractErrorMessage(requestError, "Registration failed. Please check your details."));
     } finally {
       setIsSubmitting(false);
     }
@@ -35,15 +49,19 @@ export default function RegisterPage() {
         <h2>Set up your access, then complete your preparation profile.</h2>
         <input
           className="form-control"
+          type="text"
           placeholder="Name"
           value={form.name}
           onChange={(event) => setForm({ ...form, name: event.target.value })}
+          required
         />
         <input
           className="form-control"
+          type="email"
           placeholder="Email"
           value={form.email}
           onChange={(event) => setForm({ ...form, email: event.target.value })}
+          required
         />
         <input
           className="form-control"
@@ -51,6 +69,8 @@ export default function RegisterPage() {
           placeholder="Password"
           value={form.password}
           onChange={(event) => setForm({ ...form, password: event.target.value })}
+          minLength={8}
+          required
         />
         {error ? <div className="form-error">{error}</div> : null}
         <button className="btn btn-primary w-100" type="submit" disabled={isSubmitting}>

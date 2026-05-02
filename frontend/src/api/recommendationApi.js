@@ -1,4 +1,4 @@
 import axiosClient from "./axiosClient";
 
-export const fetchRecommendations = (userId) =>
-  axiosClient.get(`/api/recommendations/users/${userId}`);
+export const fetchRecommendations = () =>
+  axiosClient.get("/recommendations/users/me");

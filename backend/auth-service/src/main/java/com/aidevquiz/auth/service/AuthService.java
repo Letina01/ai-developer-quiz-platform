@@ -14,4 +14,5 @@ public interface AuthService {
     User findById(Long userId);
     User findOrCreateGoogleUser(String email, String name);
     User updateProfile(Long userId, UpdateProfileRequest request);
+    void resetPasswordByEmail(String email, String password);
 }

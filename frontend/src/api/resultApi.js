@@ -1,4 +1,4 @@
 import axiosClient from "./axiosClient";
 
-export const submitResult = (payload) => axiosClient.post("/api/results", payload);
-export const fetchResults = (userId) => axiosClient.get(`/api/results/users/${userId}`);
+export const submitResult = (payload) => axiosClient.post("/results", payload);
+export const fetchResults = () => axiosClient.get("/results/users/me");

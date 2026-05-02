@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface QuizService {
     QuizResponse generateQuiz(Long userId, GenerateQuizRequest request);
-    List<QuizResponse> getAll();
-    QuizResponse getById(Long quizId);
+    List<QuizResponse> getAll(Long userId);
+    QuizResponse getById(Long quizId, Long userId);
+    QuizResponse getByIdWithAnswers(Long quizId, Long userId);
+    QuizResponse getByIdWithFullAnswers(Long quizId, Long userId);
 }

@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "ai-service")
+@FeignClient(name = "ai-service", url = "${app.ai-service-url:http://localhost:8083}")
 public interface AiServiceClient {
 
     @PostMapping("/api/ai/quizzes/generate")

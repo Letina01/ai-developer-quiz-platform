@@ -2,14 +2,21 @@ import { useEffect } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
+function parseHashParams(hashValue) {
+  const hash = hashValue.startsWith("#") ? hashValue.slice(1) : hashValue;
+  return new URLSearchParams(hash);
+}
+
 export default function OAuthCallbackPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { acceptExternalSession, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const userId = searchParams.get("userId");
+    const hashParams = parseHashParams(window.location.hash || "");
+    const params = hashParams.get("token") ? hashParams : searchParams;
+    const token = params.get("token");
+    const userId = params.get("userId");
 
     if (!token || !userId) {
       navigate("/login?oauthError=callback_failed", { replace: true });
@@ -19,15 +26,15 @@ export default function OAuthCallbackPage() {
     acceptExternalSession({
       accessToken: token,
       userId: Number(userId),
-      name: searchParams.get("name") || "Developer",
-      email: searchParams.get("email") || "",
-      profileCompleted: searchParams.get("profileCompleted") === "true",
-      focusDomain: searchParams.get("focusDomain") || "",
-      targetRole: searchParams.get("targetRole") || "",
-      authProvider: searchParams.get("authProvider") || "GOOGLE"
+      name: params.get("name") || "Developer",
+      email: params.get("email") || "",
+      profileCompleted: params.get("profileCompleted") === "true",
+      focusDomain: params.get("focusDomain") || "",
+      targetRole: params.get("targetRole") || "",
+      authProvider: params.get("authProvider") || "GOOGLE"
     });
 
-    navigate(searchParams.get("profileCompleted") === "true" ? "/dashboard" : "/profile", { replace: true });
+    navigate(params.get("profileCompleted") === "true" ? "/dashboard" : "/profile", { replace: true });
   }, [acceptExternalSession, navigate, searchParams]);
 
   if (isAuthenticated) {

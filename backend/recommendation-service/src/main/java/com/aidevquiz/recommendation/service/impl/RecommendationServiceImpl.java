@@ -21,7 +21,7 @@ public class RecommendationServiceImpl implements RecommendationService {
 
     @Override
     public RecommendationResponse getRecommendations(Long userId) {
-        List<ResultSummary> results = resultClient.getResults(userId);
+        List<ResultSummary> results = resultClient.getResults(userId, userId);
         if (results.isEmpty()) {
             return new RecommendationResponse(userId, List.of("Start taking quizzes!"), List.of("Not enough data"), List.of("General Knowledge Quiz"));
         }

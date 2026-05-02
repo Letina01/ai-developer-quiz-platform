@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="auth-service" />
+        <module name="email-service" />
         <module name="api-gateway" />
         <module name="quiz-service" />
         <module name="result-service" />

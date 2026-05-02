@@ -31,8 +31,11 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
-    window.location.href = `${apiBaseUrl}/oauth2/authorization/google`;
+    const configuredGateway = (import.meta.env.VITE_GATEWAY_URL || "").trim();
+    const gatewayOrigin =
+      configuredGateway ||
+      `${window.location.protocol}//${window.location.hostname}:8080`;
+    window.location.href = `${gatewayOrigin}/oauth2/authorization/google`;
   };
 
   return (
@@ -80,7 +83,7 @@ export default function LoginPage() {
         </button>
 
         <p className="auth-helper">
-          New here? <Link to="/register">Create an account</Link>
+          New here? <Link to="/register">Create an account</Link> | <Link to="/forgot-password">Forgot password?</Link>
         </p>
       </form>
     </div>

@@ -16,6 +16,7 @@
         <module>ai-service</module>
         <module>result-service</module>
         <module>recommendation-service</module>
+        <module>email-service</module>
     </modules>
 
     <properties>
@@ -25,6 +26,9 @@
         <spring.boot.version>3.3.0</spring.boot.version>
         <spring.cloud.version>2023.0.1</spring.cloud.version>
         <spring.ai.version>1.0.0</spring.ai.version>
+        <springdoc.version>2.5.0</springdoc.version>
+        <flyway.version>10.10.0</flyway.version>
+        <snakeyaml.version>2.2</snakeyaml.version>
     </properties>
 
     <dependencyManagement>
@@ -50,8 +54,41 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-mysql</artifactId>
+                <version>${flyway.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -75,6 +112,13 @@
                     <version>3.13.0</version>
                     <configuration>
                         <release>${maven.compiler.release}</release>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <plugin>

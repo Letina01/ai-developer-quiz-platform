@@ -16,10 +16,19 @@ export default function DashboardPage() {
       return;
     }
 
-    Promise.all([fetchResults(user.id), fetchRecommendations(user.id)])
-      .then(([resultResponse, recommendationResponse]) => {
-        setResults(resultResponse.data || []);
-        setRecommendations(recommendationResponse.data || null);
+    Promise.allSettled([fetchResults(), fetchRecommendations()])
+      .then(([resultsState, recommendationsState]) => {
+        if (resultsState.status === "fulfilled") {
+          setResults(resultsState.value.data || []);
+        }
+        if (recommendationsState.status === "fulfilled") {
+          setRecommendations(recommendationsState.value.data || null);
+        }
+        if (resultsState.status === "rejected" && recommendationsState.status === "rejected") {
+          setError("Unable to load full dashboard data. You can still continue practicing.");
+        } else {
+          setError("");
+        }
       })
       .catch(() => setError("Unable to load full dashboard data. You can still continue practicing."));
   }, [user?.id]);

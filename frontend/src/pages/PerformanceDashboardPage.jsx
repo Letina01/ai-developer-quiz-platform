@@ -19,8 +19,11 @@ export default function PerformanceDashboardPage() {
       return;
     }
 
-    fetchResults(user.id)
-      .then((response) => setResults(response.data || []))
+    fetchResults()
+      .then((response) => {
+        setResults(response.data || []);
+        setError("");
+      })
       .catch(() => setError("Unable to load analytics right now."));
   }, [user?.id]);
 

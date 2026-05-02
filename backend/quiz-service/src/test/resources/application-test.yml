@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: quiz-service-test
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  flyway:
+    enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          secret-key: test_secret_key_for_jwt_token_validation_testing_only
+
+security:
+  jwt:
+    secret: test_super_secret_key_for_testing_purposes_only_256_bits_minimum
+
+app:
+  internal-api-key: test-internal-key
+  ai-service-url: http://localhost:8083
+
+eureka:
+  client:
+    enabled: false
+
+logging:
+  level:
+    root: WARN
+    com.aidevquiz: DEBUG
